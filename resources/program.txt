@@ -1,9 +1,15 @@
-Var ids, idb
+Var ids,idb; ida
 Begin
-ids := 1 + 1 / idb
-While (ids > -5 XOR 8)
-avvaw
-qq22123s +*//*/ 12312
+/*The best comment
+ever
+
+1
+*/
+
+ids:=(1+1)/idb
+While (ids > -5 XOR 8 OR (a=0))
+avvaw :
+qq22123s +*//**/ 12312
 Do
 idb:=0
 End.

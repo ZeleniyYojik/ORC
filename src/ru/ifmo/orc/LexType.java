@@ -8,8 +8,9 @@ enum LexType {
     Multyplicative(4),
     Logical(5),
     Assignment(6),
-    Error(7),
-    Delimeter(8),
+    Delimiter(7),
+    Bracket(8),
+    Error(9),
     KeyWord(1000);
     int val;
 
