@@ -13,12 +13,12 @@ class Logger {
         this.outPath = outPath;
     }
 
-    void log(String lex, LexType lexType, int lineNumber) throws IOException {
-        sb.append("<" + lex + ";" + lexType.val + ";" + lineNumber + ">" + "\n");
-        if (lexType == LexType.Error) {
-            System.out.println("Error at line " + lineNumber + " - \"" + lex + "\"");
+    void log(Lexeme lexeme) throws IOException {
+        if (lexeme.type == LexType.Error.val) {
+            System.out.println("Error at line " + lexeme.lineNum + " - \"" + lexeme.word + "\"");
         }
-        System.out.println("<" + lex + ";" + lexType.val + ";" + lineNumber + ">");
+        sb.append(lexeme+"\n");
+        System.out.println(lexeme);
     }
 
     void endLogging() throws IOException {

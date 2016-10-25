@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 class Scanner {
+    static ArrayList<Lexeme> lexemes = new ArrayList<>();
     static ArrayList<String> ids = new ArrayList<>();
     static ArrayList<String> consts = new ArrayList<>();
     static ArrayList<String> delims = new ArrayList<>();
@@ -69,31 +70,41 @@ class Scanner {
                                 case "do":
                                 case "var":
                                 case "while": {
-                                    logger.log(checkLex(keyWords, word) + "", LexType.KeyWord, lineNumb);
+                                    Lexeme lexeme = new Lexeme(checkLex(keyWords, word), LexType.KeyWord.val, lineNumb, word);
+                                    lexemes.add(lexeme);
+                                    logger.log(lexeme);
                                 }
                                 break;
                                 case "end": {
                                     int dot = pbr.read();
                                     if (dot == '.') {
-                                        logger.log(checkLex(keyWords, "end.") + "", LexType.KeyWord, lineNumb);
+                                        Lexeme lexeme = new Lexeme(checkLex(keyWords, "end."), LexType.KeyWord.val, lineNumb, "end.");
+                                        lexemes.add(lexeme);
+                                        logger.log(lexeme);
                                     } else {
                                         if (dot != -1) {
                                             pbr.unread(dot);
                                         }
-                                        logger.log(checkLex(keyWords, "end") + "", LexType.KeyWord, lineNumb);
+                                        Lexeme lexeme = new Lexeme(checkLex(keyWords, "end"), LexType.KeyWord.val, lineNumb, "end");
+                                        lexemes.add(lexeme);
+                                        logger.log(lexeme);
                                     }
                                 }
                                 break;
                                 case "and":
                                 case "or":
                                 case "xor": {
-                                    logger.log(checkLex(logical, word) + "", LexType.Logical, lineNumb);
+                                    Lexeme lexeme = new Lexeme(checkLex(logical, word), LexType.Logical.val, lineNumb, word);
+                                    lexemes.add(lexeme);
+                                    logger.log(lexeme);
                                 }
                                 break;
                             /*Word is Id*/
                                 default: {
                                     int id = checkId(word);
-                                    logger.log(id + "", LexType.Id, lineNumb);
+                                    Lexeme lexeme = new Lexeme(id, LexType.Id.val, lineNumb, word);
+                                    lexemes.add(lexeme);
+                                    logger.log(lexeme);
                                 }
                                 break;
                             }
@@ -105,7 +116,9 @@ class Scanner {
                             String constWord = readConst(pbr);
                             constWord = Integer.toHexString(Integer.parseInt(constWord));
                             int id = checkConst(constWord);
-                            logger.log(id + "", LexType.Const, lineNumb);
+                            Lexeme lexeme = new Lexeme(id, LexType.Const.val, lineNumb, constWord);
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                             continue;
                         }
                         if (rc == '-') {
@@ -115,23 +128,33 @@ class Scanner {
                                 String constWord = readConst(pbr);
                                 constWord = Integer.toHexString(Integer.parseInt(constWord));
                                 int id = checkConst(constWord);
-                                logger.log(checkLex(unary, (char) rc + "") + "", LexType.Unary, lineNumb);
-                                logger.log(id + "", LexType.Const, lineNumb);
+                                Lexeme lexeme = new Lexeme(checkLex(unary, (char) rc + ""), LexType.Unary.val, lineNumb, (char) rc + "");
+                                lexemes.add(lexeme);
+                                logger.log(lexeme);
+                                lexeme = new Lexeme(id, LexType.Const.val, lineNumb, constWord);
+                                lexemes.add(lexeme);
+                                logger.log(lexeme);
                                 continue;
                             } else {
                                 if (digit != -1) {
                                     pbr.unread(digit);
                                 }
-                                logger.log(checkLex(additive, (char) rc + "") + "", LexType.Additive, lineNumb);
+                                Lexeme lexeme = new Lexeme(checkLex(additive, (char) rc + ""), LexType.Additive.val, lineNumb, (char) rc + "");
+                                lexemes.add(lexeme);
+                                logger.log(lexeme);
                                 continue;
                             }
                         }
                         if (rc == '+') {
-                            logger.log(checkLex(additive, (char) rc + "") + "", LexType.Additive, lineNumb);
+                            Lexeme lexeme = new Lexeme(checkLex(additive, (char) rc + ""), LexType.Additive.val, lineNumb, (char) rc + "");
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                             continue;
                         }
                         if (rc == '*') {
-                            logger.log(checkLex(multiplicative, (char) rc + "") + "", LexType.Multiplicative, lineNumb);
+                            Lexeme lexeme = new Lexeme(checkLex(multiplicative, (char) rc + ""), LexType.Multiplicative.val, lineNumb, (char) rc + "");
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                             continue;
                         }
                     /*Проверка на комментарий*/
@@ -142,22 +165,30 @@ class Scanner {
                                 continue;
                             } else if (mul != -1) {
                                 pbr.unread(mul);
-                                logger.log(checkLex(multiplicative, (char) rc + "") + "", LexType.Multiplicative, lineNumb);
+                                Lexeme lexeme = new Lexeme(checkLex(multiplicative, (char) rc + ""), LexType.Multiplicative.val, lineNumb, (char) rc + "");
+                                lexemes.add(lexeme);
+                                logger.log(lexeme);
                                 continue;
                             }
                         }
                         if (rc == '>' || rc == '<' || rc == '=') {
-                            logger.log(checkLex(logical, (char) rc + "") + "", LexType.Logical, lineNumb);
+                            Lexeme lexeme = new Lexeme(checkLex(logical, (char) rc + ""), LexType.Logical.val, lineNumb, (char) rc + "");
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                             continue;
                         }
 
                         if (rc == ':') {
                             int eq = pbr.read();
                             if (eq == '=') {
-                                logger.log(checkLex(assignment, ":=") + "", LexType.Assignment, lineNumb);
+                                Lexeme lexeme = new Lexeme(checkLex(assignment, ":="), LexType.Assignment.val, lineNumb, ":=");
+                                lexemes.add(lexeme);
+                                logger.log(lexeme);
                                 continue;
                             } else {
-                                logger.log("" + (char) rc, LexType.Error, lineNumb);
+                                Lexeme lexeme = new Lexeme(-1, LexType.Error.val, lineNumb, "" + (char) rc);
+                                lexemes.add(lexeme);
+                                logger.log(lexeme);
                                 if (eq != -1) {
                                     pbr.unread(eq);
                                 }
@@ -165,19 +196,25 @@ class Scanner {
                             }
                         }
                         if (rc == ',' || rc == ';') {
-                            logger.log(checkLex(delims, "" + (char) rc) + "", LexType.Delimiter, lineNumb);
+                            Lexeme lexeme = new Lexeme(checkLex(delims, "" + (char) rc), LexType.Delimiter.val, lineNumb, "" + (char) rc);
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                             continue;
                         }
 
                         if (rc == '(' || rc == ')') {
-                            logger.log(checkLex(brackets, "" + (char) rc) + "", LexType.Bracket, lineNumb);
+                            Lexeme lexeme = new Lexeme(checkLex(brackets, "" + (char) rc), LexType.Bracket.val, lineNumb, "" + (char) rc);
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                             continue;
                         }
                         if (rc == Character.MAX_VALUE) {
                             break;
                         }
                         if (rc != ' ') {
-                            logger.log((char) rc + "", LexType.Error, lineNumb);
+                            Lexeme lexeme = new Lexeme(-1, LexType.Error.val, lineNumb, "" + (char) rc);
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
                         }
                     } else {
                         pbr.unread(rc);
