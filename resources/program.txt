@@ -1,0 +1,9 @@
+Var ids, idb
+Begin
+ids := 1 + 1 / idb
+While (ids > -5 XOR 8)
+avvaw
+qq22123s +*//*/ 12312
+Do
+idb:=0
+End.
