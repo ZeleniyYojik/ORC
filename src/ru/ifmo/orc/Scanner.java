@@ -1,12 +1,17 @@
 package ru.ifmo.orc;
 
 import java.io.*;
+import java.util.ArrayList;
 
 
 class Scanner {
+    private static ArrayList<String> ids = new ArrayList<>();
+    private static ArrayList<String> consts = new ArrayList<>();
 
-    static void scan(String source_path, String output_path) throws FileNotFoundException {
-        File source = new File(source_path);
+    static void scan(String sourcePath, String outputPath) throws Exception {
+        File source = new File(sourcePath);
+        Logger logger = null;
+        logger = new Logger(outputPath);
         int lineNumb = 0;
         boolean comment = false;
         try (BufferedReader brl = new BufferedReader(new FileReader(source))) {
@@ -34,30 +39,31 @@ class Scanner {
                                 case "Do":
                                 case "Var":
                                 case "While": {
-                                    Logger.log(word, LexType.KeyWord, lineNumb);
+                                    logger.log(word, LexType.KeyWord, lineNumb);
                                 }
                                 break;
                                 case "End": {
                                     int dot = pbr.read();
                                     if (dot == '.') {
-                                        Logger.log("End.", LexType.KeyWord, lineNumb);
+                                        logger.log("End.", LexType.KeyWord, lineNumb);
                                     } else {
                                         if (dot != -1) {
                                             pbr.unread(dot);
                                         }
-                                        Logger.log("End", LexType.KeyWord, lineNumb);
+                                        logger.log("End", LexType.KeyWord, lineNumb);
                                     }
                                 }
                                 break;
                                 case "AND":
                                 case "OR":
                                 case "XOR": {
-                                    Logger.log(word, LexType.Logical, lineNumb);
+                                    logger.log(word, LexType.Logical, lineNumb);
                                 }
                                 break;
                             /*Word is Id*/
                                 default: {
-                                    Logger.log(word, LexType.Id, lineNumb);
+                                    int id = checkId(word);
+                                    logger.log("" + id, LexType.Id, lineNumb);
                                 }
                                 break;
                             }
@@ -65,28 +71,30 @@ class Scanner {
                     /*const*/
                         if (Character.isDigit(rc)) {
                             pbr.unread(rc);
-                            String constt = readConst(pbr);
-                            Logger.log(constt, LexType.Const, lineNumb);
+                            String constWord = readConst(pbr);
+                            constWord = Integer.toHexString(Integer.parseInt(constWord));
+                            int id = checkConst(constWord);
+                            logger.log("" + id, LexType.Const, lineNumb);
                         }
                         if (rc == '-') {
                             int digit = pbr.read();
                             if (Character.isDigit(digit)) {
                                 pbr.unread(digit);
                                 String constt = readConst(pbr);
-                                Logger.log(String.valueOf((char) rc), LexType.Unary, lineNumb);
-                                Logger.log(constt, LexType.Const, lineNumb);
+                                logger.log(String.valueOf((char) rc), LexType.Unary, lineNumb);
+                                logger.log(constt, LexType.Const, lineNumb);
                             } else {
                                 if (digit != -1) {
                                     pbr.unread(digit);
                                 }
-                                Logger.log(String.valueOf((char) rc), LexType.Additive, lineNumb);
+                                logger.log(String.valueOf((char) rc), LexType.Additive, lineNumb);
                             }
                         }
                         if (rc == '+') {
-                            Logger.log("" + (char) rc, LexType.Additive, lineNumb);
+                            logger.log("" + (char) rc, LexType.Additive, lineNumb);
                         }
                         if (rc == '*') {
-                            Logger.log("" + (char) rc, LexType.Multyplicative, lineNumb);
+                            logger.log("" + (char) rc, LexType.Multyplicative, lineNumb);
                         }
                     /*Проверка на комментарий*/
                         if (rc == '/') {
@@ -96,28 +104,28 @@ class Scanner {
                                 continue;
                             } else if (mul != -1) {
                                 pbr.unread(mul);
-                                Logger.log("" + (char) rc, LexType.Multyplicative, lineNumb);
+                                logger.log("" + (char) rc, LexType.Multyplicative, lineNumb);
                             }
                         }
                         if (rc == '>' || rc == '<' || rc == '=') {
-                            Logger.log("" + (char) rc, LexType.Logical, lineNumb);
+                            logger.log("" + (char) rc, LexType.Logical, lineNumb);
                         }
                         if (rc == ':') {
                             int eq = pbr.read();
                             if (eq == '=') {
-                                Logger.log(":=", LexType.Assignment, lineNumb);
+                                logger.log(":=", LexType.Assignment, lineNumb);
                             } else {
-                                Logger.log("" + (char) rc, LexType.Error, lineNumb);
+                                logger.log("" + (char) rc, LexType.Error, lineNumb);
                                 if (eq != -1) {
                                     pbr.unread(eq);
                                 }
                             }
                         }
                         if (rc == ',' || rc == ';') {
-                            Logger.log("" + (char) rc, LexType.Delimiter, lineNumb);
+                            logger.log("" + (char) rc, LexType.Delimiter, lineNumb);
                         }
                         if (rc == '(' || rc == ')') {
-                            Logger.log("" + (char) rc, LexType.Bracket, lineNumb);
+                            logger.log("" + (char) rc, LexType.Bracket, lineNumb);
                         }
                     } else {
                         pbr.unread(rc);
@@ -138,6 +146,7 @@ class Scanner {
                     }
                 }
             }
+            logger.endLogging(ids, consts);
         } catch (
                 IOException e)
 
@@ -145,6 +154,26 @@ class Scanner {
             e.printStackTrace();
         }
 
+    }
+
+    private static int checkId(String word) {
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).equals(word)) {
+                return i;
+            }
+        }
+        ids.add(word);
+        return ids.size() - 1;
+    }
+
+    private static int checkConst(String word) {
+        for (int i = 0; i < consts.size(); i++) {
+            if (consts.get(i).equals(word)) {
+                return i;
+            }
+        }
+        consts.add(word);
+        return consts.size() - 1;
     }
 
     private static String readWord(PushbackReader pbr) throws IOException {
