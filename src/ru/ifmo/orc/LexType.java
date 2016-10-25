@@ -5,7 +5,7 @@ enum LexType {
     Id(1),
     Unary(2),
     Additive(3),
-    Multyplicative(4),
+    Multiplicative(4),
     Logical(5),
     Assignment(6),
     Delimiter(7),

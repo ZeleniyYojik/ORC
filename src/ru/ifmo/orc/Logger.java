@@ -14,25 +14,43 @@ class Logger {
     }
 
     void log(String lex, LexType lexType, int lineNumber) throws IOException {
-        sb.append("<" + lex + ";" + lexType.toString() + ";" + lineNumber + ">" + "\n");
+        sb.append("<" + lex + ";" + lexType.val + ";" + lineNumber + ">" + "\n");
         if (lexType == LexType.Error) {
             System.out.println("Error at line " + lineNumber + " - \"" + lex + "\"");
         }
         System.out.println("<" + lex + ";" + lexType.val + ";" + lineNumber + ">");
     }
 
-    void endLogging(ArrayList<String> ids, ArrayList<String> consts) throws IOException {
+    void endLogging() throws IOException {
         this.fw = new FileWriter(this.outPath);
-        fw.append("IDs\n");
-        for (int i = 0; i < ids.size(); i++) {
-            fw.append("<" + ids.get(i) + ";" + i+">\n");
-        }
-        fw.append("Consts\n");
-        for (int i = 0; i < consts.size(); i++) {
-            fw.append("<" + consts.get(i) + ";" + i+">\n");
-        }
-        fw.append("Lexemas\n");
+        fw.append("=IDs=\n");
+        logTable(Scanner.ids);
+        fw.append("=Consts=\n");
+        logTable(Scanner.consts);
+        fw.append("=Delims=\n");
+        logTable(Scanner.delims);
+        fw.append("=Brackets=\n");
+        logTable(Scanner.brackets);
+        fw.append("=KeyWords=\n");
+        logTable(Scanner.keyWords);
+        fw.append("=Logical=\n");
+        logTable(Scanner.logical);
+        fw.append("=Unary=\n");
+        logTable(Scanner.unary);
+        fw.append("=Additive=\n");
+        logTable(Scanner.additive);
+        fw.append("=Multiplicative=\n");
+        logTable(Scanner.multiplicative);
+        fw.append("=Assignment=\n");
+        logTable(Scanner.assignment);
+        fw.append("=Lexemes=\n");
         fw.append(sb.toString());
         fw.close();
+    }
+
+    private void logTable(ArrayList<String> arr) throws IOException {
+        for (int i = 0; i < arr.size(); i++) {
+            this.fw.append("<" + arr.get(i) + ";" + i + ">\n");
+        }
     }
 }

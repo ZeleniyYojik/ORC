@@ -6,6 +6,9 @@ ever
 1
 */
 
+.
+
+! @3 1231!&
 ids:=(1+1)/idb
 While (ids > -5 XOR 8 OR (a=0))
 avvaw :
