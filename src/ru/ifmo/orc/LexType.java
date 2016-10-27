@@ -11,6 +11,7 @@ enum LexType {
     Delimiter(7),
     Bracket(8),
     Error(9),
+    EOF(10),
     KeyWord(1000);
     int val;
 

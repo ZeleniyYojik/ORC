@@ -16,9 +16,9 @@ class Lexeme {
     @Override
     public String toString() {
         if (type == LexType.Error.val) {
-            return "<" + word + ";" + type + ";" + lineNum + ">";
-        }else {
-            return "<" + id + ";" + type + ";" + lineNum + ">";
+            return "<" + word + ";" + type/* + ";" + lineNum */ + ">";
+        } else {
+            return "<" + id + ";" + type/* + ";" + lineNum */ + ">";
         }
     }
 }

@@ -60,8 +60,10 @@ class Scanner {
                     if (rc == -1) {
                         break;
                     }
+                    //Проверка на нахождение в цикле чтения комментария
                     if (!comment) {
-                    /*Word*/
+                        /*Word
+                        *Если первый символ слова - буква, начинаем чтение всего слова целиком*/
                         if (Character.isLetter(rc)) {
                             pbr.unread(rc);
                             String word = readWord(pbr).toLowerCase();
@@ -99,7 +101,9 @@ class Scanner {
                                     logger.log(lexeme);
                                 }
                                 break;
-                            /*Word is Id*/
+                            /*Word is Id
+                            * Если слово не попало ни в один case, значит оно не является ключевым словом
+                            * Является идентификатором*/
                                 default: {
                                     int id = checkId(word);
                                     Lexeme lexeme = new Lexeme(id, LexType.Id.val, lineNumb, word);
@@ -110,7 +114,8 @@ class Scanner {
                             }
                             continue;
                         }
-                    /*const*/
+                    /*const
+                    * Если первый символ - цифра, читаем комнстанту*/
                         if (Character.isDigit(rc)) {
                             pbr.unread(rc);
                             String constWord = readConst(pbr);
@@ -235,6 +240,9 @@ class Scanner {
                     }
                 }
             }
+            Lexeme lexeme = new Lexeme(-2, LexType.EOF.val, lineNumb, "EOF");
+            lexemes.add(lexeme);
+            logger.log(lexeme);
             logger.endLogging();
         } catch (IOException e)
 
