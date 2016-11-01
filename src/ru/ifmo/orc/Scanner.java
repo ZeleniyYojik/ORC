@@ -1,39 +1,32 @@
 package ru.ifmo.orc;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 class Scanner {
-    static ArrayList<Lexeme> lexemes = new ArrayList<>();
-    static ArrayList<String> ids = new ArrayList<>();
-    static ArrayList<String> consts = new ArrayList<>();
-    static ArrayList<String> delims = new ArrayList<>();
-    static ArrayList<String> brackets = new ArrayList<>();
-    static ArrayList<String> keyWords = new ArrayList<>();
-    static ArrayList<String> logical = new ArrayList<>();
-    static ArrayList<String> unary = new ArrayList<>();
-    static ArrayList<String> additive = new ArrayList<>();
-    static ArrayList<String> multiplicative = new ArrayList<>();
-    static ArrayList<String> assignment = new ArrayList<>();
+    static List<Lexeme> lexemes = new ArrayList<>();
+    static List<String> ids = new ArrayList<>();
+    static List<String> consts = new ArrayList<>();
+    static List<String> delims = new ArrayList<>();
+    static List<String> openBrackets = new ArrayList<>();
+    static List<String> closeBrackets = new ArrayList<>();
+    static List<String> keyWords = new ArrayList<>();
+    static List<String> logical = new ArrayList<>();
+    static List<String> unary = new ArrayList<>();
+    static List<String> additive = new ArrayList<>();
+    static List<String> multiplicative = new ArrayList<>();
+    static List<String> assignment = new ArrayList<>();
 
     static void scan(String sourcePath, String outputPath) throws Exception {
-        delims.add(",");
-        delims.add(";");
-        brackets.add("(");
-        brackets.add(")");
-        keyWords.add("begin");
-        keyWords.add("while");
-        keyWords.add("do");
-        keyWords.add("end");
-        keyWords.add("end.");
-        keyWords.add("var");
-        logical.add("and");
-        logical.add("or");
-        logical.add("xor");
-        logical.add("<");
-        logical.add(">");
-        logical.add("=");
+        delims.addAll(Arrays.asList(",", ";"));
+        openBrackets.addAll(Arrays.asList("("));
+        closeBrackets.addAll(Arrays.asList(")"));
+        keyWords.addAll(Arrays.asList("begin", "end", "end.", "while", "do", "var"));
+        logical.addAll(Arrays.asList("and", "or", "xor", ">", "<", "="));
         unary.add("-");
         additive.add("-");
         additive.add("+");
@@ -72,7 +65,7 @@ class Scanner {
                                 case "do":
                                 case "var":
                                 case "while": {
-                                    Lexeme lexeme = new Lexeme(checkLex(keyWords, word), LexType.KeyWord.val, lineNumb, word);
+                                    Lexeme lexeme = new Lexeme(keyWords.indexOf(word), LexType.KeyWord.val, lineNumb, word);
                                     lexemes.add(lexeme);
                                     logger.log(lexeme);
                                 }
@@ -80,14 +73,14 @@ class Scanner {
                                 case "end": {
                                     int dot = pbr.read();
                                     if (dot == '.') {
-                                        Lexeme lexeme = new Lexeme(checkLex(keyWords, "end."), LexType.KeyWord.val, lineNumb, "end.");
+                                        Lexeme lexeme = new Lexeme(keyWords.indexOf("end."), LexType.KeyWord.val, lineNumb, "end.");
                                         lexemes.add(lexeme);
                                         logger.log(lexeme);
                                     } else {
                                         if (dot != -1) {
                                             pbr.unread(dot);
                                         }
-                                        Lexeme lexeme = new Lexeme(checkLex(keyWords, "end"), LexType.KeyWord.val, lineNumb, "end");
+                                        Lexeme lexeme = new Lexeme(keyWords.indexOf("end"), LexType.KeyWord.val, lineNumb, "end");
                                         lexemes.add(lexeme);
                                         logger.log(lexeme);
                                     }
@@ -96,7 +89,7 @@ class Scanner {
                                 case "and":
                                 case "or":
                                 case "xor": {
-                                    Lexeme lexeme = new Lexeme(checkLex(logical, word), LexType.Logical.val, lineNumb, word);
+                                    Lexeme lexeme = new Lexeme(logical.indexOf(word), LexType.Logical.val, lineNumb, word);
                                     lexemes.add(lexeme);
                                     logger.log(lexeme);
                                 }
@@ -127,37 +120,27 @@ class Scanner {
                             continue;
                         }
                         if (rc == '-') {
-                            int digit = pbr.read();
-                            if (Character.isDigit(digit)) {
-                                pbr.unread(digit);
-                                String constWord = readConst(pbr);
-                                constWord = Integer.toHexString(Integer.parseInt(constWord));
-                                int id = checkConst(constWord);
-                                Lexeme lexeme = new Lexeme(checkLex(unary, (char) rc + ""), LexType.Unary.val, lineNumb, (char) rc + "");
-                                lexemes.add(lexeme);
-                                logger.log(lexeme);
-                                lexeme = new Lexeme(id, LexType.Const.val, lineNumb, constWord);
+                            Lexeme l = lexemes.get(lexemes.size() - 1);
+                            if (!lexemes.isEmpty() && (l.type == LexType.Const.val || l.type == LexType.CloseBracket.val || l.type == LexType.Id.val)) {
+                                Lexeme lexeme = new Lexeme(additive.indexOf((char) rc + ""), LexType.Additive.val, lineNumb, (char) rc + "");
                                 lexemes.add(lexeme);
                                 logger.log(lexeme);
                                 continue;
                             } else {
-                                if (digit != -1) {
-                                    pbr.unread(digit);
-                                }
-                                Lexeme lexeme = new Lexeme(checkLex(additive, (char) rc + ""), LexType.Additive.val, lineNumb, (char) rc + "");
+                                Lexeme lexeme = new Lexeme(unary.indexOf((char) rc + ""), LexType.Unary.val, lineNumb, (char) rc + "");
                                 lexemes.add(lexeme);
                                 logger.log(lexeme);
                                 continue;
                             }
                         }
                         if (rc == '+') {
-                            Lexeme lexeme = new Lexeme(checkLex(additive, (char) rc + ""), LexType.Additive.val, lineNumb, (char) rc + "");
+                            Lexeme lexeme = new Lexeme(additive.indexOf((char) rc + ""), LexType.Additive.val, lineNumb, (char) rc + "");
                             lexemes.add(lexeme);
                             logger.log(lexeme);
                             continue;
                         }
                         if (rc == '*') {
-                            Lexeme lexeme = new Lexeme(checkLex(multiplicative, (char) rc + ""), LexType.Multiplicative.val, lineNumb, (char) rc + "");
+                            Lexeme lexeme = new Lexeme(multiplicative.indexOf((char) rc + ""), LexType.Multiplicative.val, lineNumb, (char) rc + "");
                             lexemes.add(lexeme);
                             logger.log(lexeme);
                             continue;
@@ -170,14 +153,14 @@ class Scanner {
                                 continue;
                             } else if (mul != -1) {
                                 pbr.unread(mul);
-                                Lexeme lexeme = new Lexeme(checkLex(multiplicative, (char) rc + ""), LexType.Multiplicative.val, lineNumb, (char) rc + "");
+                                Lexeme lexeme = new Lexeme(multiplicative.indexOf((char) rc + ""), LexType.Multiplicative.val, lineNumb, (char) rc + "");
                                 lexemes.add(lexeme);
                                 logger.log(lexeme);
                                 continue;
                             }
                         }
                         if (rc == '>' || rc == '<' || rc == '=') {
-                            Lexeme lexeme = new Lexeme(checkLex(logical, (char) rc + ""), LexType.Logical.val, lineNumb, (char) rc + "");
+                            Lexeme lexeme = new Lexeme(logical.indexOf((char) rc + ""), LexType.Logical.val, lineNumb, (char) rc + "");
                             lexemes.add(lexeme);
                             logger.log(lexeme);
                             continue;
@@ -186,7 +169,7 @@ class Scanner {
                         if (rc == ':') {
                             int eq = pbr.read();
                             if (eq == '=') {
-                                Lexeme lexeme = new Lexeme(checkLex(assignment, ":="), LexType.Assignment.val, lineNumb, ":=");
+                                Lexeme lexeme = new Lexeme(assignment.indexOf(":="), LexType.Assignment.val, lineNumb, ":=");
                                 lexemes.add(lexeme);
                                 logger.log(lexeme);
                                 continue;
@@ -201,14 +184,20 @@ class Scanner {
                             }
                         }
                         if (rc == ',' || rc == ';') {
-                            Lexeme lexeme = new Lexeme(checkLex(delims, "" + (char) rc), LexType.Delimiter.val, lineNumb, "" + (char) rc);
+                            Lexeme lexeme = new Lexeme(delims.indexOf("" + (char) rc), LexType.Delimiter.val, lineNumb, "" + (char) rc);
                             lexemes.add(lexeme);
                             logger.log(lexeme);
                             continue;
                         }
 
-                        if (rc == '(' || rc == ')') {
-                            Lexeme lexeme = new Lexeme(checkLex(brackets, "" + (char) rc), LexType.Bracket.val, lineNumb, "" + (char) rc);
+                        if (rc == '(') {
+                            Lexeme lexeme = new Lexeme(openBrackets.indexOf((char) rc + ""), LexType.OpenBracket.val, lineNumb, "" + (char) rc);
+                            lexemes.add(lexeme);
+                            logger.log(lexeme);
+                            continue;
+                        }
+                        if (rc == ')') {
+                            Lexeme lexeme = new Lexeme(closeBrackets.indexOf((char) rc + ""), LexType.CloseBracket.val, lineNumb, "" + (char) rc);
                             lexemes.add(lexeme);
                             logger.log(lexeme);
                             continue;
@@ -244,41 +233,26 @@ class Scanner {
             lexemes.add(lexeme);
             logger.log(lexeme);
             logger.endLogging();
-        } catch (IOException e)
-
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
     private static int checkId(String word) {
-        for (int i = 0; i < ids.size(); i++) {
-            if (ids.get(i).equals(word)) {
-                return i;
-            }
-        }
-        ids.add(word);
-        return ids.size() - 1;
+        int id = ids.indexOf(word);
+        if (id == -1) {
+            ids.add(word);
+            return ids.size() - 1;
+        } else return id;
     }
 
     private static int checkConst(String word) {
-        for (int i = 0; i < consts.size(); i++) {
-            if (consts.get(i).equals(word)) {
-                return i;
-            }
-        }
-        consts.add(word);
-        return consts.size() - 1;
-    }
-
-    private static int checkLex(ArrayList<String> arl, String word) {
-        for (int i = 0; i < arl.size(); i++) {
-            if (arl.get(i).equals(word)) {
-                return i;
-            }
-        }
-        return -1;
+        int id = consts.indexOf(word);
+        if (id == -1) {
+            consts.add(word);
+            return consts.size() - 1;
+        } else return id;
     }
 
     private static String readWord(PushbackReader pbr) throws IOException {

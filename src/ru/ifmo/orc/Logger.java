@@ -2,7 +2,7 @@ package ru.ifmo.orc;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 class Logger {
     private String outPath;
@@ -29,8 +29,10 @@ class Logger {
         logTable(Scanner.consts);
         fw.append("=Delims=\n");
         logTable(Scanner.delims);
-        fw.append("=Brackets=\n");
-        logTable(Scanner.brackets);
+        fw.append("=OpenBrackets=\n");
+        logTable(Scanner.openBrackets);
+        fw.append("=CloseBrackets=\n");
+        logTable(Scanner.closeBrackets);
         fw.append("=KeyWords=\n");
         logTable(Scanner.keyWords);
         fw.append("=Logical=\n");
@@ -48,7 +50,7 @@ class Logger {
         fw.close();
     }
 
-    private void logTable(ArrayList<String> arr) throws IOException {
+    private void logTable(List<String> arr) throws IOException {
         for (int i = 0; i < arr.size(); i++) {
             this.fw.append("<" + arr.get(i) + ";" + i + ">\n");
         }

@@ -9,9 +9,10 @@ enum LexType {
     Logical(5),
     Assignment(6),
     Delimiter(7),
-    Bracket(8),
-    Error(9),
-    EOF(10),
+    OpenBracket(8),
+    CloseBracket(9),
+    Error(10),
+    EOF(11),
     KeyWord(1000);
     int val;
 
