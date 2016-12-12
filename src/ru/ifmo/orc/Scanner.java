@@ -1,7 +1,6 @@
 package ru.ifmo.orc;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -237,6 +236,85 @@ class Scanner {
             e.printStackTrace();
         }
 
+    }
+
+    //Что за жесть я пишу...
+    //Мне лень добавлять эту логику в метод сканирования, поэтому будет так
+    public static List<Symbol> getSymbols() {
+        List<Symbol> result = new ArrayList<>();
+        for (Lexeme l : lexemes) {
+            switch (l.word) {
+                case "begin":
+                    result.add(new Symbol(true, 101));
+                    break;
+                case "end.":
+                    result.add(new Symbol(true, 102));
+                    break;
+                case "var":
+                    result.add(new Symbol(true, 103));
+                    break;
+                case ";":
+                    result.add(new Symbol(true, 105));
+                    break;
+                case ",":
+                    result.add(new Symbol(true, 106));
+                    break;
+                case "end":
+                    result.add(new Symbol(true, 107));
+                    break;
+                case ":=":
+                    result.add(new Symbol(true, 108));
+                    break;
+                case "+":
+                    result.add(new Symbol(true, 109));
+                    break;
+                case "-":
+                    result.add(new Symbol(true, 110));
+                    break;
+                case "*":
+                    result.add(new Symbol(true, 111));
+                    break;
+                case "/":
+                    result.add(new Symbol(true, 112));
+                    break;
+                case "and":
+                    result.add(new Symbol(true, 113));
+                    break;
+                case "or":
+                    result.add(new Symbol(true, 114));
+                    break;
+                case "xor":
+                    result.add(new Symbol(true, 115));
+                    break;
+                case "<":
+                    result.add(new Symbol(true, 116));
+                    break;
+                case ">":
+                    result.add(new Symbol(true, 117));
+                    break;
+                case "(":
+                    result.add(new Symbol(true, 118));
+                    break;
+                case ")":
+                    result.add(new Symbol(true, 119));
+                    break;
+                case "while":
+                    result.add(new Symbol(true, 121));
+                    break;
+                case "do":
+                    result.add(new Symbol(true, 122));
+                    break;
+                default:
+                    if (l.type == LexType.Const.val) {
+                        result.add(new Symbol(true, 120));
+                    }
+                    if (l.type == LexType.Id.val) {
+                        result.add(new Symbol(true, 120));
+                    }
+                    break;
+            }
+        }
+        return result;
     }
 
     private static int checkId(String word) {
