@@ -1,15 +1,13 @@
 var
-  a,m;n,sum
-
+  a,m,n,sum,a;
 begin
-  m := 5;
+  m := a+1;
   n := m;
-  Do
-  sum := sum + m;
-  while sum<m*1000
+  sum := ((sum + m)+1)+2+3*5;
+  while (sum<m*1000) do a:=m/1;
   /*The best
   comment
   ever!*/
-  sum:=sum*2
-  n:=1000/sum
+  sum:=sum*2;
+  n:=1000/sum;
 end.

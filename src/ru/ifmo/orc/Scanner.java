@@ -245,71 +245,71 @@ class Scanner {
         for (Lexeme l : lexemes) {
             switch (l.word) {
                 case "begin":
-                    result.add(new Symbol(true, 101));
+                    result.add(new Symbol(true, 101, l.lineNum));
                     break;
                 case "end.":
-                    result.add(new Symbol(true, 102));
+                    result.add(new Symbol(true, 102, l.lineNum));
                     break;
                 case "var":
-                    result.add(new Symbol(true, 103));
+                    result.add(new Symbol(true, 103, l.lineNum));
                     break;
                 case ";":
-                    result.add(new Symbol(true, 105));
+                    result.add(new Symbol(true, 105, l.lineNum));
                     break;
                 case ",":
-                    result.add(new Symbol(true, 106));
+                    result.add(new Symbol(true, 106, l.lineNum));
                     break;
                 case "end":
-                    result.add(new Symbol(true, 107));
+                    result.add(new Symbol(true, 107, l.lineNum));
                     break;
                 case ":=":
-                    result.add(new Symbol(true, 108));
+                    result.add(new Symbol(true, 108, l.lineNum));
                     break;
                 case "+":
-                    result.add(new Symbol(true, 109));
+                    result.add(new Symbol(true, 109, l.lineNum));
                     break;
                 case "-":
-                    result.add(new Symbol(true, 110));
+                    result.add(new Symbol(true, 110, l.lineNum));
                     break;
                 case "*":
-                    result.add(new Symbol(true, 111));
+                    result.add(new Symbol(true, 111, l.lineNum));
                     break;
                 case "/":
-                    result.add(new Symbol(true, 112));
+                    result.add(new Symbol(true, 112, l.lineNum));
                     break;
                 case "and":
-                    result.add(new Symbol(true, 113));
+                    result.add(new Symbol(true, 113, l.lineNum));
                     break;
                 case "or":
-                    result.add(new Symbol(true, 114));
+                    result.add(new Symbol(true, 114, l.lineNum));
                     break;
                 case "xor":
-                    result.add(new Symbol(true, 115));
+                    result.add(new Symbol(true, 115, l.lineNum));
                     break;
                 case "<":
-                    result.add(new Symbol(true, 116));
+                    result.add(new Symbol(true, 116, l.lineNum));
                     break;
                 case ">":
-                    result.add(new Symbol(true, 117));
+                    result.add(new Symbol(true, 117, l.lineNum));
                     break;
                 case "(":
-                    result.add(new Symbol(true, 118));
+                    result.add(new Symbol(true, 118, l.lineNum));
                     break;
                 case ")":
-                    result.add(new Symbol(true, 119));
+                    result.add(new Symbol(true, 119, l.lineNum));
                     break;
                 case "while":
-                    result.add(new Symbol(true, 121));
+                    result.add(new Symbol(true, 121, l.lineNum));
                     break;
                 case "do":
-                    result.add(new Symbol(true, 122));
+                    result.add(new Symbol(true, 122, l.lineNum));
                     break;
                 default:
                     if (l.type == LexType.Const.val) {
-                        result.add(new Symbol(true, 120));
+                        result.add(new Symbol(true, 120, l.lineNum));
                     }
                     if (l.type == LexType.Id.val) {
-                        result.add(new Symbol(true, 120));
+                        result.add(new Symbol(true, 104, l.lineNum));
                     }
                     break;
             }

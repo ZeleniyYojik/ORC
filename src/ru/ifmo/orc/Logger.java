@@ -18,7 +18,7 @@ class Logger {
             System.out.println("Error at line " + lexeme.lineNum + " - \"" + lexeme.word + "\"");
         }
         sb.append(lexeme+"\n");
-        System.out.println(lexeme);
+//        System.out.println(lexeme);
     }
 
     void endLogging() throws IOException {
